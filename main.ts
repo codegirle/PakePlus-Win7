@@ -48,6 +48,18 @@ async function createWindow() {
 
     mainWindow.setContentProtection(config.contentProtected)
 
+    // 强制使用配置里的标题，阻止网页标题覆盖
+    const appTitle = config.title || config.appTitle
+    if (appTitle) {
+        mainWindow.setTitle(appTitle)
+    }
+    mainWindow.on('page-title-updated', (event) => {
+        event.preventDefault()
+        if (appTitle) {
+            mainWindow?.setTitle(appTitle)
+        }
+    })
+
     // 最小/最大尺寸：某些平台下用 setXXX 更稳定
     if (config.minWidth > 0 && config.minHeight > 0) {
         mainWindow.setMinimumSize(config.minWidth, config.minHeight)
