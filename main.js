@@ -2,14 +2,14 @@ const { app, BrowserWindow, Menu } = require('electron')
 const path = require('path')
 const config = require('./config')
 
-const WEBSITE_URL = config.websiteUrl
+const WEBSITE_URL = config.url
 
 let mainWindow
 
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width: config.windowWidth,
-        height: config.windowHeight,
+        width: config.width,
+        height: config.height,
         minWidth: config.minWidth,
         minHeight: config.minHeight,
         webPreferences: {
