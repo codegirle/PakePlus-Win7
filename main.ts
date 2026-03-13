@@ -6,6 +6,7 @@ const WEBSITE_URL = config.url
 
 let mainWindow: BrowserWindow | null
 
+// create the window
 async function createWindow() {
     const partition = config.incognito ? 'temp' : undefined
 
@@ -38,7 +39,7 @@ async function createWindow() {
             webSecurity: true,
             devTools: config.devtools,
             backgroundThrottling: config.backgroundThrottling ?? undefined,
-            javascript: config.javascriptDisabled ? false : undefined,
+            // javascript: config.javascriptDisabled ? false : undefined,
             sandbox: true,
             partition,
         },
@@ -46,7 +47,7 @@ async function createWindow() {
         backgroundColor: config.backgroundColor ?? '#ffffff',
     })
 
-    mainWindow.setContentProtection(config.contentProtected)
+    // mainWindow.setContentProtection(config.contentProtected)
 
     // 强制使用配置里的标题，阻止网页标题覆盖
     const appTitle = config.title || config.appTitle
@@ -114,6 +115,7 @@ async function createWindow() {
     })
 }
 
+// create the menu
 function createMenu() {
     const template: Electron.MenuItemConstructorOptions[] = [
         {
@@ -207,10 +209,13 @@ function createMenu() {
     Menu.setApplicationMenu(menu)
 }
 
+// when the application is ready, create the window and the menu
 app.whenReady().then(() => {
+    // create the window
     createWindow()
-    createMenu()
-
+    // create the menu
+    // createMenu()
+    // when the application is activated, create the window
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
             createWindow()
@@ -218,12 +223,14 @@ app.whenReady().then(() => {
     })
 })
 
+// when all windows are closed, quit the application
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit()
     }
 })
 
+// when a certificate error occurs, prevent it from being displayed
 app.on(
     'certificate-error',
     (event, webContents, url, error, certificate, callback) => {
