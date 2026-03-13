@@ -33,7 +33,7 @@ async function createWindow() {
         tabbingIdentifier: config.tabbingIdentifier ?? undefined,
         acceptFirstMouse: config.acceptFirstMouse,
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
+            preload: path.join(__dirname, 'custom.js'),
             nodeIntegration: false,
             contextIsolation: true,
             webSecurity: true,
