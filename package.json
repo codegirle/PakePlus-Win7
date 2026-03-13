@@ -2,15 +2,16 @@
     "name": "pakeplus-win7",
     "version": "1.0.0",
     "description": "跨平台桌面应用，支持 Windows 7",
-    "main": "main.js",
+    "main": "dist/main.js",
     "scripts": {
-        "start": "electron .",
-        "build": "electron-builder",
-        "build:win": "electron-builder --win",
-        "build:win32": "electron-builder --win --ia32",
-        "build:win64": "electron-builder --win --x64",
-        "build:mac": "electron-builder --mac",
-        "build:linux": "electron-builder --linux",
+        "build:ts": "tsc",
+        "start": "tsc && electron .",
+        "build": "tsc && electron-builder",
+        "build:win": "tsc && electron-builder --win",
+        "build:win32": "tsc && electron-builder --win --ia32",
+        "build:win64": "tsc && electron-builder --win --x64",
+        "build:mac": "tsc && electron-builder --mac",
+        "build:linux": "tsc && electron-builder --linux",
         "icon:icns": "node scripts/createIcon.cjs -icon app-icon.png -padding 1 -format icns",
         "icon:ico": "node scripts/createIcon.cjs -icon app-icon.png",
         "worker:pp": "node scripts/ppworker.cjs"
@@ -24,7 +25,10 @@
     "license": "MIT",
     "devDependencies": {
         "electron": "^22.3.27",
-        "electron-builder": "^24.9.1"
+        "electron-builder": "^24.9.1",
+        "typescript": "^5.7.0",
+        "@types/node": "^22.10.0",
+        "@types/electron": "^1.6.12"
     },
     "build": {
         "appId": "com.pakeplus.win7",
@@ -33,9 +37,7 @@
             "output": "dist"
         },
         "files": [
-            "main.js",
-            "preload.js",
-            "config.js",
+            "dist/**",
             "package.json"
         ],
         "win": {
