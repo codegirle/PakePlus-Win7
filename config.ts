@@ -44,6 +44,8 @@ export interface AppConfig {
     javascriptDisabled: boolean
     openDevTools: boolean
     appTitle: string
+    // 是否禁用网页标题
+    pageTitle: boolean
 }
 
 const config: AppConfig = {
@@ -93,6 +95,7 @@ const config: AppConfig = {
     javascriptDisabled: false,
     openDevTools: false,
     appTitle: 'PakePlus-Win7',
+    pageTitle: false,
 }
 
 export default config
