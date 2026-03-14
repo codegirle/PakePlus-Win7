@@ -57,7 +57,7 @@ const createIcnsIcon = async () => {
             )} -icon ${path.join(
                 __dirname,
                 '../',
-                'app-icon.png'
+                'icon.png'
             )} -padding 1 -format icns`
         )
         console.log('🚀 icns icon created')
@@ -76,7 +76,7 @@ const createIcoIcon = async () => {
             )} -icon ${path.join(
                 __dirname,
                 '../',
-                'app-icon.png'
+                'icon.png'
             )} -padding 1 -format ico`
         )
         console.log('🚀 ico icon created')
