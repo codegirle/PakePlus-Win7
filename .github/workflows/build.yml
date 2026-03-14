@@ -52,6 +52,9 @@ jobs:
             - name: Run worker
               run: node scripts/ppworker.cjs
 
+            - name: Create icons
+              run: npm run icon
+
             - name: Get version number
               id: version
               run: |
@@ -96,6 +99,9 @@ jobs:
 
             - name: Run worker
               run: node scripts/ppworker.cjs
+
+            - name: Create icons
+              run: npm run icon
 
             - name: Get version number
               id: version
