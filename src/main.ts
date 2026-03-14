@@ -17,7 +17,7 @@ async function createWindow() {
         minHeight: config.minHeight,
         maxWidth: config.maxWidth,
         maxHeight: config.maxHeight,
-        title: config.title || config.appTitle,
+        title: config.title,
         resizable: config.resizable,
         fullscreen: config.fullscreen,
         frame: config.decorations,
@@ -50,13 +50,15 @@ async function createWindow() {
     // mainWindow.setContentProtection(config.contentProtected)
 
     // 强制使用配置里的标题，阻止网页标题覆盖
-    const appTitle = config.title || config.appTitle
+    const appTitle = config.title
     if (appTitle) {
         mainWindow.setTitle(appTitle)
     }
+
+    // if pageTitle is true, prevent the page title from being updated
     mainWindow.on('page-title-updated', (event) => {
         event.preventDefault()
-        if (appTitle) {
+        if (appTitle && config.pageTitle) {
             mainWindow?.setTitle(appTitle)
         }
     })
@@ -196,7 +198,7 @@ function createMenu() {
                         dialog.showMessageBox(mainWindow, {
                             type: 'info',
                             title: '关于',
-                            message: config.appTitle,
+                            message: config.title,
                             detail: '跨平台桌面应用\n支持 Windows 7',
                         })
                     },
