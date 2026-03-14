@@ -94,7 +94,7 @@ const main = async () => {
     console.log('url:', url)
     // console.log('password:', password)
     await updatePackageJson(name)
-    await updateRendererJs(url)
+    // await updateRendererJs(url)
     // await updateMainJs(password)
     await createIcnsIcon()
     await createIcoIcon()
