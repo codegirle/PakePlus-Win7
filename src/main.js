@@ -1,4 +1,4 @@
-const { app, BrowserWindow, shell } = require('electron')
+const { app, BrowserWindow, shell, Menu } = require('electron')
 const path = require('path')
 const config = require('./config.json')
 
@@ -119,10 +119,8 @@ async function createWindow() {
 
 // when the application is ready, create the window and the menu
 app.whenReady().then(() => {
-    // create the window
+    Menu.setApplicationMenu(null) // 不显示菜单栏
     createWindow()
-    // create the menu
-    // createMenu()
     // when the application is activated, create the window
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
