@@ -96,8 +96,8 @@ const main = async () => {
     await updatePackageJson(name)
     // await updateRendererJs(url)
     // await updateMainJs(password)
-    await createIcnsIcon()
-    await createIcoIcon()
+    // await createIcnsIcon()
+    // await createIcoIcon()
     console.log('🚀 worker end')
 }
 
