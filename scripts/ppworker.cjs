@@ -88,7 +88,7 @@ const createIcoIcon = async () => {
 // Main execution
 const main = async () => {
     console.log('🚀 worker start')
-    const { name, version, url, password } = ppconfig
+    const { name, version, url } = ppconfig
     console.log('name:', name)
     console.log('version:', version)
     console.log('url:', url)
