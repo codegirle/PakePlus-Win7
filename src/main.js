@@ -4,7 +4,7 @@ import config from './config.json'
 
 const WEBSITE_URL = config.url
 
-let mainWindow: BrowserWindow | null
+let mainWindow = null
 
 // create the window
 async function createWindow() {
@@ -22,7 +22,7 @@ async function createWindow() {
         fullscreen: config.fullscreen,
         frame: config.decorations,
         transparent: config.transparent,
-        titleBarStyle: config.titleBarStyle as never,
+        titleBarStyle: config.titleBarStyle,
         closable: config.closable,
         minimizable: config.minimizable,
         maximizable: config.maximizable,
@@ -119,7 +119,7 @@ async function createWindow() {
 
 // create the menu
 function createMenu() {
-    const template: Electron.MenuItemConstructorOptions[] = [
+    const template = [
         {
             label: '文件',
             submenu: [

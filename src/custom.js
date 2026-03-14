@@ -1,18 +1,5 @@
 import { contextBridge } from 'electron'
 
-declare global {
-    interface Window {
-        electronAPI: {
-            platform: NodeJS.Platform
-            versions: {
-                node: string
-                chrome: string
-                electron: string
-            }
-        }
-    }
-}
-
 contextBridge.exposeInMainWorld('electronAPI', {
     platform: process.platform,
     versions: {
@@ -33,8 +20,8 @@ console.log(
 
 // very important, if you don't know what it is, don't touch it
 // 非常重要，不懂代码不要动
-const hookClick = (e: MouseEvent) => {
-    const origin = (e.target as HTMLElement | null)?.closest('a')
+const hookClick = (e) => {
+    const origin = e.target?.closest('a')
     const isBaseTargetBlank = document.querySelector(
         'head base[target="_blank"]'
     )
