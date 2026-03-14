@@ -18,7 +18,10 @@
         "desktop",
         "cross-platform"
     ],
-    "author": "",
+    "author": {
+        "name": "xiaoshen",
+        "email": "1024xiaoshen@gmail.com"
+    },
     "license": "MIT",
     "devDependencies": {
         "electron": "^22.3.27",
