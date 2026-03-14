@@ -2,7 +2,7 @@
     "name": "pakeplus-win7",
     "version": "1.0.0",
     "description": "跨平台桌面应用，支持 Windows 7",
-    "main": "main.js",
+    "main": "src/main.js",
     "scripts": {
         "start": "electron .",
         "build": "electron-builder",
