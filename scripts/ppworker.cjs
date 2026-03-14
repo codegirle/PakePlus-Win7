@@ -1,5 +1,6 @@
 const fs = require('fs-extra')
 const path = require('path')
+const png2icons = require('png2icons')
 const { execSync } = require('child_process')
 const ppconfig = require('./ppconfig.json')
 
