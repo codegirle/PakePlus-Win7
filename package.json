@@ -12,7 +12,7 @@
         "build:mac": "electron-builder --mac",
         "build:linux": "electron-builder --linux",
         "worker:pp": "node scripts/ppworker.cjs",
-        "icon": "tauri icon"
+        "icon": "tauri icon icon.png -o icons"
     },
     "keywords": [
         "electron",
@@ -55,18 +55,18 @@
                     ]
                 }
             ],
-            "icon": "build/icon.ico"
+            "icon": "icons/icon.ico"
         },
         "mac": {
             "target": "dmg",
-            "icon": "build/icon.icns"
+            "icon": "icons/icon.icns"
         },
         "linux": {
             "target": [
                 "AppImage",
                 "deb"
             ],
-            "icon": "build/icon.png"
+            "icon": "icons/icon.png"
         },
         "nsis": {
             "oneClick": false,
