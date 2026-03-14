@@ -1,6 +1,6 @@
 import { app, BrowserWindow, Menu, shell, dialog } from 'electron'
 import path from 'path'
-import config from './config'
+import config from './config.json'
 
 const WEBSITE_URL = config.url
 
