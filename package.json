@@ -11,7 +11,8 @@
         "build:win64": "electron-builder --win --x64",
         "build:mac": "electron-builder --mac",
         "build:linux": "electron-builder --linux",
-        "worker:pp": "node scripts/ppworker.cjs"
+        "worker:pp": "node scripts/ppworker.cjs",
+        "icon": "tauri icon"
     },
     "keywords": [
         "electron",
@@ -77,6 +78,7 @@
     "dependencies": {
         "png-to-ico": "^3.0.1",
         "png2icons": "^2.0.1",
+        "@tauri-apps/cli": "^2",
         "sharp": "^0.34.5"
     }
 }
