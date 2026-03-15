@@ -50,11 +50,13 @@ jobs:
                     - platform: 'macos-latest'
                       arch: 'arm64'
                       build_args: '--arm64'
+                      electron_target: '--mac'
                       artifact_name: 'macos-aarch64'
                       enabled: ${{ github.event.inputs.build_macos_aarch64 == 'true' }}
                     - platform: 'macos-latest'
                       arch: 'x64'
                       build_args: '--x64'
+                      electron_target: '--mac'
                       artifact_name: 'macos-x86_64'
                       enabled: ${{ github.event.inputs.build_macos_x86_64 == 'true' }}
 
@@ -62,11 +64,13 @@ jobs:
                     - platform: 'ubuntu-22.04'
                       arch: 'x64'
                       build_args: '--x64'
+                      electron_target: '--linux'
                       artifact_name: 'linux-x86_64'
                       enabled: ${{ github.event.inputs.build_linux_x86_64 == 'true' }}
                     - platform: 'ubuntu-22.04'
                       arch: 'arm64'
                       build_args: '--arm64'
+                      electron_target: '--linux'
                       artifact_name: 'linux-aarch64'
                       enabled: ${{ github.event.inputs.build_linux_aarch64 == 'true' }}
 
@@ -74,11 +78,13 @@ jobs:
                     - platform: 'windows-latest'
                       arch: 'x64'
                       build_args: '--x64'
+                      electron_target: '--win'
                       artifact_name: 'windows-x86_64'
                       enabled: ${{ github.event.inputs.build_windows_x86_64 == 'true' }}
                     - platform: 'windows-latest'
                       arch: 'arm64'
                       build_args: '--arm64'
+                      electron_target: '--win'
                       artifact_name: 'windows-aarch64'
                       enabled: ${{ github.event.inputs.build_windows_aarch64 == 'true' }}
 
@@ -113,15 +119,10 @@ jobs:
               if: ${{ matrix.enabled }}
               run: node ./scripts/ppworker.cjs
 
-            # Electron 打包核心步骤
+            # Electron 打包核心步骤（根据 matrix 动态：平台 + 架构）
             - name: Build Electron app
               if: ${{ matrix.enabled }}
-              env:
-                  # 传递架构参数给 electron-builder
-                  ARCH: ${{ matrix.arch }}
-              run: |
-                  # 根据平台和架构执行打包命令
-                  npm electron-builder ${{ matrix.build_args }} --publish never
+              run: npx electron-builder ${{ matrix.electron_target }} ${{ matrix.build_args }}
 
             # 获取版本信息（用于发布）
             - name: Extract version info
