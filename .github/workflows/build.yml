@@ -1,249 +1,183 @@
-name: Build PakePlus
+name: Electron Release
 
 on:
+    workflow_dispatch:
+        inputs:
+            build_macos_aarch64:
+                description: 'Build for macOS aarch64 (Apple Silicon)'
+                required: false
+                type: boolean
+                default: false
+            build_macos_x86_64:
+                description: 'Build for macOS x86_64 (Intel)'
+                required: false
+                type: boolean
+                default: false
+            build_linux_x86_64:
+                description: 'Build for Linux x86_64'
+                required: false
+                type: boolean
+                default: false
+            build_linux_aarch64:
+                description: 'Build for Linux aarch64'
+                required: false
+                type: boolean
+                default: false
+            build_windows_x86_64:
+                description: 'Build for Windows x86_64'
+                required: false
+                type: boolean
+                default: false
+            build_windows_aarch64:
+                description: 'Build for Windows aarch64'
+                required: false
+                type: boolean
+                default: false
     push:
         tags:
             - 'v*'
-    workflow_dispatch:
-        inputs:
-            version:
-                description: 'Version (例如: 1.0.0)'
-                required: false
-                default: '0.0.1'
-            build_windows:
-                description: 'Build Windows'
-                required: false
-                type: boolean
-                default: false
-            build_mac:
-                description: 'Build macOS'
-                required: false
-                type: boolean
-                default: false
-            build_linux:
-                description: 'Build Linux'
-                required: false
-                type: boolean
-                default: false
-
-permissions:
-    contents: write
 
 jobs:
-    build-windows:
-        outputs:
-            status: ${{ job.status }}
-        if: (github.event_name == 'push') || (github.event.inputs.build_windows == 'true')
-        runs-on: windows-latest
-        strategy:
-            matrix:
-                arch: [x64]
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: '18'
-                  cache: 'npm'
-
-            - name: Install dependencies
-              run: npm ci
-
-            - name: Run worker
-              run: node scripts/ppworker.cjs
-
-            - name: Create icons
-              run: npm run icon
-
-            - name: Get version number
-              id: version
-              run: |
-                  if ("${{ github.event_name }}" -eq "workflow_dispatch" -and "${{ github.event.inputs.version }}" -ne "") {
-                    echo "version=${{ github.event.inputs.version }}" >> $env:GITHUB_OUTPUT
-                  } else {
-                    $packageJson = Get-Content package.json | ConvertFrom-Json
-                    echo "version=$($packageJson.version)" >> $env:GITHUB_OUTPUT
-                  }
-              shell: pwsh
-
-            - name: Build Windows (${{ matrix.arch }})
-              run: npm run build:win -- --${{ matrix.arch }}
-              env:
-                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-            - name: Upload build artifacts
-              uses: actions/upload-artifact@v4
-              with:
-                  name: windows-${{ matrix.arch }}
-                  path: dist/*.exe
-                  retention-days: 30
-
-    build-mac:
-        outputs:
-            status: ${{ job.status }}
-        if: (github.event_name == 'push') || (github.event.inputs.build_mac == 'true')
-        runs-on: macos-latest
-        strategy:
-            matrix:
-                arch: [x64]
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: '18'
-                  cache: 'npm'
-
-            - name: Install dependencies
-              run: npm ci
-
-            - name: Run worker
-              run: node scripts/ppworker.cjs
-
-            - name: Create icons
-              run: npm run icon
-
-            - name: Get version number
-              id: version
-              run: |
-                  if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.version }}" ]; then
-                    echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
-                  else
-                    VERSION=$(node -p "require('./package.json').version")
-                    echo "version=$VERSION" >> $GITHUB_OUTPUT
-                  fi
-
-            - name: Build macOS (${{ matrix.arch }})
-              run: npm run build:mac -- --${{ matrix.arch }}
-              env:
-                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-            - name: Upload build artifacts
-              uses: actions/upload-artifact@v4
-              with:
-                  name: mac-${{ matrix.arch }}
-                  path: dist/*.dmg
-                  retention-days: 30
-
-    build-linux:
-        outputs:
-            status: ${{ job.status }}
-        if: (github.event_name == 'push') || (github.event.inputs.build_linux == 'true')
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                arch: [x64]
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: '18'
-                  cache: 'npm'
-
-            - name: Install dependencies
-              run: npm ci
-
-            - name: Run worker
-              run: node scripts/ppworker.cjs
-
-            - name: Create icons
-              run: npm run icon
-
-            - name: Get version number
-              id: version
-              run: |
-                  if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.version }}" ]; then
-                    echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
-                  else
-                    VERSION=$(node -p "require('./package.json').version")
-                    echo "version=$VERSION" >> $GITHUB_OUTPUT
-                  fi
-
-            - name: Build Linux (${{ matrix.arch }})
-              run: npm run build:linux -- --${{ matrix.arch }}
-              env:
-                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-            - name: Upload build artifacts
-              uses: actions/upload-artifact@v4
-              with:
-                  name: linux-${{ matrix.arch }}
-                  path: dist/*.AppImage
-                  retention-days: 30
-
-    release:
-        if: >
-            (
-              (!github.event.inputs.build_windows || needs.build-windows.result == 'success') &&
-              (!github.event.inputs.build_mac || needs.build-mac.result == 'success') &&
-              (!github.event.inputs.build_linux || needs.build-linux.result == 'success')
-            )
-        runs-on: ubuntu-latest
+    publish-electron:
         permissions:
             contents: write
+
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    # macOS 平台配置
+                    - platform: 'macos-latest'
+                      arch: 'arm64'
+                      build_args: '--arm64'
+                      artifact_name: 'macos-aarch64'
+                      enabled: ${{ github.event.inputs.build_macos_aarch64 == 'true' }}
+                    - platform: 'macos-latest'
+                      arch: 'x64'
+                      build_args: '--x64'
+                      artifact_name: 'macos-x86_64'
+                      enabled: ${{ github.event.inputs.build_macos_x86_64 == 'true' }}
+
+                    # Linux 平台配置
+                    - platform: 'ubuntu-22.04'
+                      arch: 'x64'
+                      build_args: '--x64'
+                      artifact_name: 'linux-x86_64'
+                      enabled: ${{ github.event.inputs.build_linux_x86_64 == 'true' }}
+                    - platform: 'ubuntu-22.04'
+                      arch: 'arm64'
+                      build_args: '--arm64'
+                      artifact_name: 'linux-aarch64'
+                      enabled: ${{ github.event.inputs.build_linux_aarch64 == 'true' }}
+
+                    # Windows 平台配置
+                    - platform: 'windows-latest'
+                      arch: 'x64'
+                      build_args: '--x64'
+                      artifact_name: 'windows-x86_64'
+                      enabled: ${{ github.event.inputs.build_windows_x86_64 == 'true' }}
+                    - platform: 'windows-latest'
+                      arch: 'arm64'
+                      build_args: '--arm64'
+                      artifact_name: 'windows-aarch64'
+                      enabled: ${{ github.event.inputs.build_windows_aarch64 == 'true' }}
+
+        runs-on: ${{ matrix.platform }}
+        timeout-minutes: 60
+
         steps:
-            - name: Checkout code
+            - name: Checkout Repository
+              if: ${{ matrix.enabled }}
               uses: actions/checkout@v4
 
-            - name: Get version number
-              id: version
-              run: |
-                  if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ -n "${{ github.event.inputs.version }}" ]; then
-                    echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
-                  else
-                    VERSION=$(node -p "require('./package.json').version")
-                    echo "version=$VERSION" >> $GITHUB_OUTPUT
-                  fi
-
-            - name: Download all build artifacts
-              uses: actions/download-artifact@v4
+            - name: Setup pnpm
+              if: ${{ matrix.enabled }}
+              uses: pnpm/action-setup@v3
               with:
-                  path: artifacts
-                  pattern: '*'
-                  merge-multiple: true
+                  version: latest
 
-            - name: Rename files (prefix with branch or tag name)
-              run: |
-                  for file in artifacts/*.{exe,dmg,AppImage}; do
-                    if [ -f "$file" ]; then
-                      dir=$(dirname "$file")
-                      base=$(basename "$file")
-                      new_file="$dir/$base"
-                      if [ "$file" != "$new_file" ]; then
-                        mv "$file" "$new_file"
-                        echo "Rename: $file -> $new_file"
-                      fi
-                    fi
-                  done
-            - name: Create Release
-              uses: softprops/action-gh-release@v1
+            - name: Sync node version and setup cache
+              if: ${{ matrix.enabled }}
+              uses: actions/setup-node@v4
               with:
-                  tag_name: ${{ github.ref_name }}
-                  name: Release v${{ steps.version.outputs.version }}
-                  body: |
-                      ## 多平台版本发布 v${{ steps.version.outputs.version }}
+                  node-version: 20
+                  cache: pnpm
+                  architecture: ${{ matrix.arch }}
 
-                      自动构建的 Windows/macOS/Linux 版本。
+            - name: Install frontend dependencies
+              if: ${{ matrix.enabled }}
+              run: pnpm install
 
-                      ### 文件说明
-                      - `*setup.exe`: Windows 安装程序
-                      - `*.exe` (非setup): Windows 便携
-                      - `*.dmg`: macOS 安装包
-                      - `*.AppImage`: Linux 可执行包
+            # Linux 平台依赖安装
+            - name: Install Linux build dependencies
+              if: ${{ matrix.enabled && matrix.platform == 'ubuntu-22.04'}}
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y libgtk-3-dev libnss3-dev libasound2-dev libxss-dev libxtst-dev libnotify-dev libgconf-2-4 libgbm-dev
 
-                      ### 系统要求
-                      - Windows 7及更高 / macOS 10.13及更高 / Linux发行版
-                      - 请根据系统架构选择对应版本
-                  files: |
-                      artifacts/**/*.exe
-                      artifacts/**/*.dmg
-                      artifacts/**/*.AppImage
-                  draft: true
+            # 初始化项目配置（和原 Tauri 逻辑保持一致）
+            - name: Init Project Config
+              if: ${{ matrix.enabled }}
+              run: node ./scripts/ppworker.cjs
+
+            # Electron 打包核心步骤
+            - name: Build Electron app
+              if: ${{ matrix.enabled }}
+              env:
+                  # 传递架构参数给 electron-builder
+                  ARCH: ${{ matrix.arch }}
+              run: |
+                  # 根据平台和架构执行打包命令
+                  pnpm electron-builder ${{ matrix.build_args }} --publish never
+
+            # 获取版本信息（用于发布）
+            - name: Extract version info
+              if: ${{ matrix.enabled }}
+              id: version_info
+              run: |
+                  # 从 package.json 读取版本号
+                  VERSION=$(node -p "require('./package.json').version")
+                  NAME=$(node -p "require('./package.json').name")
+                  echo "VERSION=$VERSION" >> $GITHUB_ENV
+                  echo "NAME=$NAME" >> $GITHUB_ENV
+                  # 默认发布描述
+                  echo "PUBBODY=Release v$VERSION" >> $GITHUB_ENV
+              shell: bash
+
+            # 上传打包产物
+            - name: Upload artifacts
+              if: ${{ matrix.enabled }}
+              uses: actions/upload-artifact@v4
+              with:
+                  name: ${{ env.NAME }}-${{ matrix.artifact_name }}
+                  path: |
+                      dist/*.exe
+                      dist/*.dmg
+                      dist/*.AppImage
+                      dist/*.deb
+                      dist/*.rpm
+                      dist/*.zip
+                      dist/*.tar.gz
+                      !dist/*.yml
+                      !dist/*.json
+
+            # 创建 GitHub Release 并上传产物
+            - name: Create GitHub Release
+              if: ${{ matrix.enabled }}
+              uses: softprops/action-gh-release@v2
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  tag_name: v${{ env.VERSION }}
+                  name: ${{ env.NAME }} v${{ env.VERSION }}
+                  body: ${{ env.PUBBODY }}
+                  draft: false
                   prerelease: false
+                  files: |
+                      dist/*.exe
+                      dist/*.dmg
+                      dist/*.AppImage
+                      dist/*.deb
+                      dist/*.rpm
+                      dist/*.zip
+                      dist/*.tar.gz
