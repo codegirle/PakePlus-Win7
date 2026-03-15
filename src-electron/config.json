@@ -53,7 +53,7 @@
     "tempPath": "./processed-image.png",
     "icnsPath": "../src-tauri/icons/icon.icns",
     "pubBody": "",
-    "isHtml": false,
+    "isHtml": true,
     "single": true,
     "state": true,
     "injectJq": false,
