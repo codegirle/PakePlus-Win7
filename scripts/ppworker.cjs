@@ -5,11 +5,17 @@ const sharp = require('sharp')
 const ppconfig = require('./ppconfig.json')
 
 // update package.json build productName
-const updatePackageJson = async (appName) => {
+const updatePackageJson = async (appName, showName, version, id) => {
     const packageJson = await fs.readJson(
         path.join(__dirname, '../', 'package.json')
     )
-    packageJson.build.productName = appName
+    packageJson.name = appName
+    // update productName
+    packageJson.build.productName = showName
+    // update id
+    packageJson.build.appId = id
+    // update version
+    packageJson.version = version
     await fs.writeJson(path.join(__dirname, '../', 'package.json'), packageJson)
 }
 
@@ -145,12 +151,13 @@ const setGithubEnv = (name, version, pubBody) => {
 // Main execution
 const main = async () => {
     console.log('🚀 worker start')
-    const { name, showName, version, url, pubBody } = ppconfig.desktop
+    const { name, showName, version, id, url, pubBody } = ppconfig.desktop
     console.log('name:', name)
     console.log('version:', version)
+    console.log('id:', id)
     console.log('url:', url)
     // console.log('password:', password)
-    await updatePackageJson(name)
+    await updatePackageJson(name, showName, version, id)
     // "iconPath": "../app-icon.png",
     // "inputPath": "../app-icon.png",
     // "tempPath": "./processed-image.png",
