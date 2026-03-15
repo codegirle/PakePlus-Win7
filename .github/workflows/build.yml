@@ -179,7 +179,6 @@ jobs:
                   retention-days: 30
 
     release:
-        needs: [build-windows, build-mac, build-linux]
         runs-on: ubuntu-latest
         if: >
             (
