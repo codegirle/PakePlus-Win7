@@ -31,6 +31,8 @@ permissions:
 
 jobs:
     build-windows:
+        outputs:
+            status: ${{ job.status }}
         if: (github.event_name == 'push') || (github.event.inputs.build_windows == 'true')
         runs-on: windows-latest
         strategy:
@@ -79,6 +81,8 @@ jobs:
                   retention-days: 30
 
     build-mac:
+        outputs:
+            status: ${{ job.status }}
         if: (github.event_name == 'push') || (github.event.inputs.build_mac == 'true')
         runs-on: macos-latest
         strategy:
@@ -126,6 +130,8 @@ jobs:
                   retention-days: 30
 
     build-linux:
+        outputs:
+            status: ${{ job.status }}
         if: (github.event_name == 'push') || (github.event.inputs.build_linux == 'true')
         runs-on: ubuntu-latest
         strategy:
@@ -173,9 +179,14 @@ jobs:
                   retention-days: 30
 
     release:
-        needs: [build-windows, build-mac, build-linux]
+        needs: [build-windows]
         runs-on: ubuntu-latest
-        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+        if: >
+            (
+              (!github.event.inputs.build_windows || needs.build-windows.result == 'success') &&
+              (!github.event.inputs.build_mac || needs.build-mac.result == 'success') &&
+              (!github.event.inputs.build_linux || needs.build-linux.result == 'success')
+            )
         permissions:
             contents: write
         steps:
@@ -201,29 +212,17 @@ jobs:
 
             - name: Rename files (prefix with branch or tag name)
               run: |
-                  PREFIX="${{ github.ref_name }}"
-                  echo "Prefix: $PREFIX"
                   for file in artifacts/*.{exe,dmg,AppImage}; do
                     if [ -f "$file" ]; then
                       dir=$(dirname "$file")
                       base=$(basename "$file")
-                      new_file="$dir/$PREFIX-$base"
+                      new_file="$dir/$base"
                       if [ "$file" != "$new_file" ]; then
                         mv "$file" "$new_file"
                         echo "Rename: $file -> $new_file"
                       fi
                     fi
                   done
-                  find artifacts -type f \( -name "*.exe" -o -name "*.dmg" -o -name "*.AppImage" \) | while read file; do
-                    dir=$(dirname "$file")
-                    base=$(basename "$file")
-                    if [[ "$base" != "$PREFIX-"* ]]; then
-                      new_file="$dir/$PREFIX-$base"
-                      mv "$file" "$new_file"
-                      echo "Rename: $file -> $new_file"
-                    fi
-                  done
-
             - name: Create Release
               uses: softprops/action-gh-release@v1
               with:
@@ -247,5 +246,5 @@ jobs:
                       artifacts/**/*.exe
                       artifacts/**/*.dmg
                       artifacts/**/*.AppImage
-                  draft: false
+                  draft: true
                   prerelease: false
