@@ -160,7 +160,7 @@
     },
     "desktop": {
         "name": "PakePlus2",
-        "showName": "拍客包",
+        "showName": "中文名称",
         "version": "0.0.2",
         "id": "com.xiaoshen.app",
         "desc": "",
