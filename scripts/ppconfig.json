@@ -29,9 +29,9 @@
     "androidRepo": "",
     "more": {
         "windows": {
-            "label": "",
-            "title": "",
-            "url": "",
+            "label": "Bilibili",
+            "title": "Bilibili",
+            "url": "https://www.bilibili.com/",
             "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
             "width": 800,
             "height": 600,
@@ -160,9 +160,9 @@
     },
     "desktop": {
         "name": "PakePlus2",
-        "showName": "PakePlusWin7",
+        "showName": "哔哩哔哩",
         "version": "0.0.4",
-        "id": "com.xiaoshen.app",
+        "id": "com.bilibili.pakeplus",
         "desc": "",
         "webUrl": "https://juejin.cn/",
         "iconPath": "../app-icon.png",
