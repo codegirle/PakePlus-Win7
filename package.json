@@ -1,7 +1,7 @@
 {
     "name": "PakePlusWin7",
     "version": "0.0.4",
-    "description": "跨平台桌面应用，支持 Windows 7",
+    "description": "Package HTML/Web/Vue/React Projects into Desktop/Mobile Apps in minutes",
     "main": "src/main.js",
     "scripts": {
         "start": "electron .",
@@ -34,7 +34,7 @@
     },
     "build": {
         "appId": "com.pakeplus.win7",
-        "productName": "拍客包",
+        "productName": "PakePlusWin7",
         "asar": true,
         "directories": {
             "output": "dist"

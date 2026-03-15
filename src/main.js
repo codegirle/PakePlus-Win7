@@ -87,6 +87,9 @@ async function createWindow() {
         mainWindow.loadURL(WEBSITE_URL)
     }
 
+    // open devtools
+    mainWindow.webContents.openDevTools()
+
     mainWindow.once('ready-to-show', () => {
         if (config.maximized) {
             mainWindow?.maximize()
