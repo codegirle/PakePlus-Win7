@@ -14,17 +14,17 @@ on:
                 description: 'Build Windows'
                 required: false
                 type: boolean
-                default: true
+                default: false
             build_mac:
                 description: 'Build macOS'
                 required: false
                 type: boolean
-                default: true
+                default: false
             build_linux:
                 description: 'Build Linux'
                 required: false
                 type: boolean
-                default: true
+                default: false
 
 permissions:
     contents: write
