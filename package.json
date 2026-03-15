@@ -10,6 +10,7 @@
         "build:win32": "electron-builder --win --ia32",
         "build:win64": "electron-builder --win --x64",
         "build:mac": "electron-builder --mac",
+        "build:mac-arm64": "electron-builder --mac --arm64",
         "build:linux": "electron-builder --linux",
         "worker:pp": "node scripts/ppworker.cjs",
         "icon": "tauri icon icon.png -o icons"
