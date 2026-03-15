@@ -83,7 +83,11 @@ async function createWindow() {
         })
     }
 
-    if (WEBSITE_URL) {
+    // if isHtml is true, load the html file
+    if (config.isHtml) {
+        const htmlPath = path.join(__dirname, '../src', 'index.html')
+        mainWindow.loadFile(htmlPath)
+    } else {
         mainWindow.loadURL(WEBSITE_URL)
     }
 
