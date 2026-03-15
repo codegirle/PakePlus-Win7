@@ -34,7 +34,7 @@
     },
     "build": {
         "appId": "com.pakeplus.win7",
-        "productName": "PakePlusWin7",
+        "productName": "拍客包",
         "asar": true,
         "directories": {
             "output": "dist"
