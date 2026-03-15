@@ -90,23 +90,16 @@ jobs:
               if: ${{ matrix.enabled }}
               uses: actions/checkout@v4
 
-            - name: Setup pnpm
-              if: ${{ matrix.enabled }}
-              uses: pnpm/action-setup@v3
-              with:
-                  version: latest
-
-            - name: Sync node version and setup cache
+            - name: Setup Node.js
               if: ${{ matrix.enabled }}
               uses: actions/setup-node@v4
               with:
-                  node-version: 20
-                  cache: pnpm
-                  architecture: ${{ matrix.arch }}
+                  node-version: '18'
+                  cache: 'npm'
 
-            - name: Install frontend dependencies
+            - name: Install dependencies
               if: ${{ matrix.enabled }}
-              run: pnpm install
+              run: npm ci
 
             # Linux 平台依赖安装
             - name: Install Linux build dependencies
@@ -128,7 +121,7 @@ jobs:
                   ARCH: ${{ matrix.arch }}
               run: |
                   # 根据平台和架构执行打包命令
-                  pnpm electron-builder ${{ matrix.build_args }} --publish never
+                  npm electron-builder ${{ matrix.build_args }} --publish never
 
             # 获取版本信息（用于发布）
             - name: Extract version info
