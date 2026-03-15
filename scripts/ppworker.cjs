@@ -5,7 +5,7 @@ const sharp = require('sharp')
 const ppconfig = require('./ppconfig.json')
 
 // update package.json build productName
-const updatePackageJson = async (appName, showName, version, id) => {
+const updatePackage = async (appName, showName, version, id) => {
     const packageJson = await fs.readJson(
         path.join(__dirname, '../', 'package.json')
     )
@@ -17,6 +17,16 @@ const updatePackageJson = async (appName, showName, version, id) => {
     // update version
     packageJson.version = version
     await fs.writeJson(path.join(__dirname, '../', 'package.json'), packageJson)
+}
+
+// update config.json
+const updateConfig = async (windows, desktop) => {
+    const configJson = { ...windows, ...desktop }
+    await fs.writeJson(
+        path.join(__dirname, '../', 'src-electron', 'config.json'),
+        configJson
+    )
+    console.log('config.json updated', configJson)
 }
 
 // update renderer.js DEFAULT_HOME_URL
@@ -157,7 +167,9 @@ const main = async () => {
     console.log('id:', id)
     console.log('url:', url)
     // console.log('password:', password)
-    await updatePackageJson(name, showName, version, id)
+    await updatePackage(name, showName, version, id)
+    // update config.json
+    await updateConfig(ppconfig.more.windows, ppconfig.desktop)
     // "iconPath": "../app-icon.png",
     // "inputPath": "../app-icon.png",
     // "tempPath": "./processed-image.png",
