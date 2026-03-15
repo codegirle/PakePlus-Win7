@@ -2,7 +2,7 @@
     "name": "PakePlusWin7",
     "version": "0.0.4",
     "description": "Package HTML/Web/Vue/React Projects into Desktop/Mobile Apps in minutes",
-    "main": "src/main.js",
+    "main": "src-electron/main.js",
     "scripts": {
         "start": "electron .",
         "build": "electron-builder",
@@ -40,7 +40,7 @@
             "output": "dist"
         },
         "files": [
-            "src/**",
+            "src-electron/**",
             "package.json"
         ],
         "win": {
