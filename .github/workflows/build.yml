@@ -179,13 +179,13 @@ jobs:
                   retention-days: 30
 
     release:
-        runs-on: ubuntu-latest
         if: >
             (
               (!github.event.inputs.build_windows || needs.build-windows.result == 'success') &&
               (!github.event.inputs.build_mac || needs.build-mac.result == 'success') &&
               (!github.event.inputs.build_linux || needs.build-linux.result == 'success')
             )
+        runs-on: ubuntu-latest
         permissions:
             contents: write
         steps:
