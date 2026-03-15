@@ -122,7 +122,7 @@ jobs:
             # Electron 打包核心步骤（根据 matrix 动态：平台 + 架构）
             - name: Build Electron app
               if: ${{ matrix.enabled }}
-              run: npx electron-builder ${{ matrix.electron_target }} ${{ matrix.build_args }}
+              run: npx electron-builder ${{ matrix.electron_target }} ${{ matrix.build_args }} --publish never
 
             # 获取版本信息（用于发布）
             - name: Extract version info
