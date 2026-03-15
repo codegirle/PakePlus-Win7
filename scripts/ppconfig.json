@@ -160,8 +160,8 @@
     },
     "desktop": {
         "name": "PakePlus2",
-        "showName": "中文名称",
-        "version": "0.0.2",
+        "showName": "360卫士",
+        "version": "0.0.4",
         "id": "com.xiaoshen.app",
         "desc": "",
         "webUrl": "https://juejin.cn/",
