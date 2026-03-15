@@ -133,7 +133,9 @@ async function createWindow() {
 
 // when the application is ready, create the window and the menu
 app.whenReady().then(() => {
-    Menu.setApplicationMenu(null) // 不显示菜单栏
+    // 不显示菜单栏
+    Menu.setApplicationMenu(null)
+    // create the window
     createWindow()
     // when the application is activated, create the window
     app.on('activate', () => {
