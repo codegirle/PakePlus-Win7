@@ -1,7 +1,7 @@
 const fs = require('fs-extra')
 const path = require('path')
 const png2icons = require('png2icons')
-const { execSync } = require('child_process')
+const sharp = require('sharp')
 const ppconfig = require('./ppconfig.json')
 
 // update package.json build productName
@@ -47,43 +47,71 @@ const updateMainJs = async (password) => {
     console.log('main.js updated')
 }
 
-// create icon
-const createIcnsIcon = async () => {
-    try {
-        execSync(
-            `node ${path.join(
-                __dirname,
-                '../',
-                'scripts/createIcon.cjs'
-            )} -icon ${path.join(
-                __dirname,
-                '../',
-                'icon.png'
-            )} -padding 1 -format icns`
-        )
-        console.log('🚀 icns icon created')
-    } catch (error) {
-        console.error('🚨 error creating icns icon:', error)
-    }
-}
+// 给图片添加圆角并添加 padding
+const createIcon = async (inputPath, tempOutputPath, icnsOutputPath) => {
+    sharp(inputPath)
+        .resize({
+            // 确保图片尺寸一致
+            width: 1024,
+            height: 1024,
+            fit: 'contain',
+            background: { r: 0, g: 0, b: 0, alpha: 0 },
+        })
+        .composite([
+            // rx ry是圆角半径
+            {
+                input: Buffer.from(
+                    `<svg>
+         <rect x="0" y="0" width="1024" height="1024" rx="250" ry="250" />
+       </svg>`
+                ),
+                blend: 'dest-in',
+            },
+        ])
+        // top/bottom/left/right 是 padding
+        .extend({
+            top: 120,
+            bottom: 120,
+            left: 120,
+            right: 120,
+            background: { r: 0, g: 0, b: 0, alpha: 0 },
+        })
+        .toFile(tempOutputPath)
+        .then(() => {
+            console.log(
+                'Image processing complete with rounded corners and padding.'
+            )
 
-const createIcoIcon = async () => {
-    try {
-        execSync(
-            `node ${path.join(
-                __dirname,
-                '../',
-                'scripts/createIcon.cjs'
-            )} -icon ${path.join(
-                __dirname,
-                '../',
-                'icon.png'
-            )} -padding 1 -format ico`
-        )
-        console.log('🚀 ico icon created')
-    } catch (error) {
-        console.error('🚨 error creating ico icon:', error)
-    }
+            // 读取处理后的 PNG 文件
+            fs.readFile(tempOutputPath, (err, data) => {
+                if (err) {
+                    console.error('Error reading processed PNG file:', err)
+                    return
+                }
+
+                // 转换 PNG 到 ICNS 格式
+                const icnsBuffer = png2icons.createICNS(data, 1, 0)
+                if (icnsBuffer) {
+                    fs.writeFile(icnsOutputPath, icnsBuffer, (writeErr) => {
+                        if (writeErr) {
+                            console.error('Error writing ICNS file:', writeErr)
+                        } else {
+                            console.log(
+                                'ICNS file created successfully:',
+                                icnsOutputPath
+                            )
+                            // 删除临时文件
+                            fs.remove(tempOutputPath)
+                        }
+                    })
+                } else {
+                    console.error('Failed to convert PNG to ICNS.')
+                }
+            })
+        })
+        .catch((err) => {
+            console.error('Error during image processing:', err)
+        })
 }
 
 // Main execution
@@ -95,10 +123,14 @@ const main = async () => {
     console.log('url:', url)
     // console.log('password:', password)
     await updatePackageJson(name)
-    // await updateRendererJs(url)
-    // await updateMainJs(password)
-    // await createIcnsIcon()
-    // await createIcoIcon()
+    // "iconPath": "../app-icon.png",
+    // "inputPath": "../app-icon.png",
+    // "tempPath": "./processed-image.png",
+    // "icnsPath": "../src-tauri/icons/icon.icns",
+    const iconPath = path.join(__dirname, '../', 'icon.png')
+    const tempPath = path.join(__dirname, '../', 'processed-image.png')
+    const icnsPath = path.join(__dirname, '../', 'icons', 'icon.icns')
+    await createIcon(iconPath, tempPath, icnsPath)
     console.log('🚀 worker end')
 }
 
