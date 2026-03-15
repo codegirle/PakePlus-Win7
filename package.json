@@ -1,6 +1,6 @@
 {
     "name": "pakeplus-win7",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "description": "跨平台桌面应用，支持 Windows 7",
     "main": "src/main.js",
     "scripts": {
