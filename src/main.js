@@ -87,8 +87,15 @@ async function createWindow() {
         mainWindow.loadURL(WEBSITE_URL)
     }
 
-    // open devtools
-    mainWindow.webContents.openDevTools()
+    // open devtools (仅当配置开启时)
+    if (config.debug) {
+        mainWindow.webContents.openDevTools()
+    }
+
+    // 关闭主窗口时先关闭 DevTools，否则 DevTools 窗口会阻止 window-all-closed 触发，导致应用无法退出、Dock/任务栏图标残留
+    mainWindow.on('close', () => {
+        mainWindow?.webContents?.closeDevTools()
+    })
 
     mainWindow.once('ready-to-show', () => {
         if (config.maximized) {
@@ -132,11 +139,9 @@ app.whenReady().then(() => {
     })
 })
 
-// when all windows are closed, quit the application
+// when all windows are closed, quit the application（所有平台关窗后都退出，避免 Dock/任务栏图标残留）
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit()
-    }
+    app.quit()
 })
 
 // when a certificate error occurs, prevent it from being displayed
