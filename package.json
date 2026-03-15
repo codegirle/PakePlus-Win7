@@ -26,11 +26,16 @@
     "license": "MIT",
     "devDependencies": {
         "electron": "^22.3.27",
-        "electron-builder": "^24.9.1"
+        "electron-builder": "^24.9.1",
+        "png-to-ico": "^3.0.1",
+        "png2icons": "^2.0.1",
+        "@tauri-apps/cli": "^2",
+        "sharp": "^0.34.5"
     },
     "build": {
         "appId": "com.pakeplus.win7",
         "productName": "PakePlusWin7",
+        "asar": true,
         "directories": {
             "output": "dist"
         },
@@ -39,6 +44,7 @@
             "package.json"
         ],
         "win": {
+            "compression": "maximum",
             "target": [
                 {
                     "target": "nsis",
@@ -74,11 +80,5 @@
             "createDesktopShortcut": true,
             "createStartMenuShortcut": true
         }
-    },
-    "dependencies": {
-        "png-to-ico": "^3.0.1",
-        "png2icons": "^2.0.1",
-        "@tauri-apps/cli": "^2",
-        "sharp": "^0.34.5"
     }
 }
