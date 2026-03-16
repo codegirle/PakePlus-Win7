@@ -99,23 +99,15 @@ async function createWindow() {
         y: savedState?.y,
     })
 
-    // mainWindow.setContentProtection(config.contentProtected)
-
-    // 强制使用配置里的标题，阻止网页标题覆盖
-    const appTitle = config.title
-    if (appTitle) {
-        mainWindow.setTitle(appTitle)
-    }
-
     // if pageTitle is true, prevent the page title from being updated
     mainWindow.on('page-title-updated', (event) => {
-        event.preventDefault()
-        if (appTitle && config.pageTitle) {
-            mainWindow?.setTitle(appTitle)
+        if (config.title && config.pageTitle) {
+            event.preventDefault()
+            mainWindow?.setTitle(config.title)
         }
     })
 
-    // 最小/最大尺寸：某些平台下用 setXXX 更稳定
+    // set the minimum/maximum size, some platforms use setXXX more stable
     if (config.minWidth > 0 && config.minHeight > 0) {
         mainWindow.setMinimumSize(config.minWidth, config.minHeight)
     }
@@ -123,12 +115,12 @@ async function createWindow() {
         mainWindow.setMaximumSize(config.maxWidth, config.maxHeight)
     }
 
-    // userAgent 必须在 loadURL 前设置
+    // set the userAgent, must be set before loadURL
     if (config.userAgent) {
         mainWindow.webContents.setUserAgent(config.userAgent)
     }
 
-    // 代理（如有）
+    // set the proxy, if exists
     if (config.proxyUrl) {
         await mainWindow.webContents.session.setProxy({
             proxyRules: config.proxyUrl,
@@ -143,12 +135,12 @@ async function createWindow() {
         mainWindow.loadURL(WEBSITE_URL)
     }
 
-    // open devtools (仅当配置开启时)
+    // open devtools, only when the debug is true
     if (config.debug) {
         mainWindow.webContents.openDevTools()
     }
 
-    // 关闭主窗口时先关闭 DevTools，否则 DevTools 窗口会阻止 window-all-closed 触发，导致应用无法退出、Dock/任务栏图标残留
+    // close the devtools before closing the main window, otherwise the devtools window will prevent the window-all-closed event from being triggered, causing the application to not exit and the Dock/taskbar icon to remain
     // save the window state before closing
     mainWindow.on('close', () => {
         saveWindowState(mainWindow)
@@ -156,7 +148,7 @@ async function createWindow() {
     })
 
     mainWindow.once('ready-to-show', () => {
-        // 如果上次是最大化/全屏，则优先恢复上次状态，否则使用配置
+        // if the last state is maximized/fullscreen, restore the last state, otherwise use the configuration
         if (savedState?.isMaximized) {
             mainWindow?.maximize()
         } else if (config.maximized) {
