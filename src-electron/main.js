@@ -149,7 +149,7 @@ async function createWindow() {
     }
 
     // 关闭主窗口时先关闭 DevTools，否则 DevTools 窗口会阻止 window-all-closed 触发，导致应用无法退出、Dock/任务栏图标残留
-    // 在关闭前保存窗口状态
+    // save the window state before closing
     mainWindow.on('close', () => {
         saveWindowState(mainWindow)
         mainWindow?.webContents?.closeDevTools()
