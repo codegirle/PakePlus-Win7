@@ -131,10 +131,39 @@ async function createWindow() {
     })
 }
 
+// creat the menu
+function createMenu() {
+    const template = [
+        {
+            label: app.name,
+            submenu: [
+                { role: 'about' },
+                { type: 'separator' },
+                { role: 'quit' },
+            ],
+        },
+        {
+            label: 'Edit',
+            submenu: [
+                { role: 'undo' },
+                { role: 'redo' },
+                { type: 'separator' },
+                { role: 'cut' },
+                { role: 'copy' },
+                { role: 'paste' },
+                { role: 'selectAll' },
+            ],
+        },
+    ]
+
+    const menu = Menu.buildFromTemplate(template)
+    Menu.setApplicationMenu(menu)
+}
+
 // when the application is ready, create the window and the menu
 app.whenReady().then(() => {
-    // 不显示菜单栏
-    Menu.setApplicationMenu(null)
+    createMenu()
+
     // create the window
     createWindow()
     // when the application is activated, create the window
