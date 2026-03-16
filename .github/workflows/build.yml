@@ -162,7 +162,7 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
-                  tag_name: v${{ env.VERSION }}
+                  tag_name: ${{ github.ref_name }}
                   name: ${{ env.NAME }} v${{ env.VERSION }}
                   body: ${{ env.PUBBODY }}
                   draft: false
