@@ -170,11 +170,8 @@ const main = async () => {
     await updatePackage(name, showName, version, id)
     // update config.json
     await updateConfig(ppconfig.more.windows, ppconfig.desktop)
-    // "iconPath": "../app-icon.png",
-    // "inputPath": "../app-icon.png",
-    // "tempPath": "./processed-image.png",
-    // "icnsPath": "../src-tauri/icons/icon.icns",
-    const iconPath = path.join(__dirname, '../', 'icon.png')
+    // create mac icon
+    const iconPath = path.join(__dirname, '../', 'app-icon.png')
     const tempPath = path.join(__dirname, '../', 'processed-image.png')
     const icnsPath = path.join(__dirname, '../', 'icons', 'icon.icns')
     await createIcon(iconPath, tempPath, icnsPath)
