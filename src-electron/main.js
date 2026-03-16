@@ -86,7 +86,7 @@ async function createWindow() {
             preload: path.join(__dirname, 'custom.js'),
             nodeIntegration: false,
             contextIsolation: true,
-            webSecurity: true,
+            webSecurity: false,
             devTools: config.devtools,
             backgroundThrottling: config.backgroundThrottling ?? undefined,
             // javascript: config.javascriptDisabled ? false : undefined,
