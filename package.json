@@ -38,14 +38,25 @@
         "appId": "com.pakeplus.win7",
         "productName": "PakePlusWin7",
         "asar": true,
+        "electronLanguages": [
+            "en-US",
+            "zh-CN"
+        ],
         "directories": {
             "output": "dist"
         },
         "files": [
             "src/**",
             "src-electron/**",
-            "package.json"
+            "package.json",
+            "!**/*.map",
+            "!**/*.pdb",
+            "!**/*.dSYM",
+            "!**/*.log",
+            "!**/test{,s}/**",
+            "!**/__tests__/**"
         ],
+        "afterPack": "scripts/afterPack.cjs",
         "win": {
             "compression": "maximum",
             "target": [
