@@ -107,38 +107,35 @@ jobs:
               if: ${{ matrix.enabled }}
               run: npm ci
 
-            # Linux 平台依赖安装
             - name: Install Linux build dependencies
               if: ${{ matrix.enabled && matrix.platform == 'ubuntu-22.04'}}
               run: |
                   sudo apt-get update
                   sudo apt-get install -y libgtk-3-dev libnss3-dev libasound2-dev libxss-dev libxtst-dev libnotify-dev libgconf-2-4 libgbm-dev
 
-            # 初始化项目配置（和原 Tauri 逻辑保持一致）
+            - name: Regenerate Icons
+              if: ${{ matrix.enabled }}
+              run: npm run icon
+
             - name: Init Project Config
               if: ${{ matrix.enabled }}
               run: node ./scripts/ppworker.cjs
 
-            # Electron 打包核心步骤（根据 matrix 动态：平台 + 架构）
             - name: Build Electron app
               if: ${{ matrix.enabled }}
               run: npx electron-builder ${{ matrix.electron_target }} ${{ matrix.build_args }} --publish never
 
-            # 获取版本信息（用于发布）
             - name: Extract version info
               if: ${{ matrix.enabled }}
               id: version_info
               run: |
-                  # 从 package.json 读取版本号
                   VERSION=$(node -p "require('./package.json').version")
                   NAME=$(node -p "require('./package.json').name")
                   echo "VERSION=$VERSION" >> $GITHUB_ENV
                   echo "NAME=$NAME" >> $GITHUB_ENV
-                  # 默认发布描述
                   echo "PUBBODY=Release v$VERSION" >> $GITHUB_ENV
               shell: bash
 
-            # 上传打包产物
             - name: Upload artifacts
               if: ${{ matrix.enabled }}
               uses: actions/upload-artifact@v4
@@ -155,7 +152,6 @@ jobs:
                       !dist/*.yml
                       !dist/*.json
 
-            # 创建 GitHub Release 并上传产物
             - name: Create GitHub Release
               if: ${{ matrix.enabled }}
               uses: softprops/action-gh-release@v2
