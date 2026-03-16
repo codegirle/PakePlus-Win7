@@ -1,18 +1,68 @@
 const { app, BrowserWindow, shell, Menu } = require('electron')
 const path = require('path')
+const fs = require('fs')
 const config = require('./config.json')
 
 const WEBSITE_URL = config.url
 
 let mainWindow = null
 
+// window state save file path, save to user data directory, avoid polluting the project directory
+const windowStatePath = path.join(app.getPath('userData'), 'app_data.json')
+
+// load the window state
+function loadWindowState() {
+    try {
+        // if the file exists and the state is true, load the state
+        if (fs.existsSync(windowStatePath) && config.state) {
+            const raw = fs.readFileSync(windowStatePath, 'utf-8')
+            const state = JSON.parse(raw)
+            if (
+                typeof state.width === 'number' &&
+                typeof state.height === 'number'
+            ) {
+                return state
+            }
+        }
+    } catch (e) {
+        // ignore parse errors, fallback to config
+    }
+    return null
+}
+
+// save the window state
+function saveWindowState(browserWindow) {
+    if (!browserWindow || browserWindow.isDestroyed()) return
+    try {
+        const bounds = browserWindow.getBounds()
+        const isMaximized = browserWindow.isMaximized()
+        const isFullScreen = browserWindow.isFullScreen()
+        const state = {
+            ...bounds,
+            isMaximized,
+            isFullScreen,
+        }
+        fs.writeFileSync(
+            windowStatePath,
+            JSON.stringify(state, null, 2),
+            'utf-8'
+        )
+    } catch (e) {
+        // ignore write errors
+    }
+}
+
 // create the window
 async function createWindow() {
+    // create the window
     const partition = config.incognito ? 'temp' : undefined
 
+    // load the window state
+    const savedState = loadWindowState()
+
     mainWindow = new BrowserWindow({
-        width: config.width,
-        height: config.height,
+        width: savedState?.width ?? config.width,
+        height: savedState?.height ?? config.height,
         minWidth: config.minWidth,
         minHeight: config.minHeight,
         maxWidth: config.maxWidth,
@@ -45,6 +95,8 @@ async function createWindow() {
         },
         show: false,
         backgroundColor: config.backgroundColor ?? '#ffffff',
+        x: savedState?.x,
+        y: savedState?.y,
     })
 
     // mainWindow.setContentProtection(config.contentProtected)
@@ -97,15 +149,20 @@ async function createWindow() {
     }
 
     // 关闭主窗口时先关闭 DevTools，否则 DevTools 窗口会阻止 window-all-closed 触发，导致应用无法退出、Dock/任务栏图标残留
+    // 在关闭前保存窗口状态
     mainWindow.on('close', () => {
+        saveWindowState(mainWindow)
         mainWindow?.webContents?.closeDevTools()
     })
 
     mainWindow.once('ready-to-show', () => {
-        if (config.maximized) {
+        // 如果上次是最大化/全屏，则优先恢复上次状态，否则使用配置
+        if (savedState?.isMaximized) {
+            mainWindow?.maximize()
+        } else if (config.maximized) {
             mainWindow?.maximize()
         }
-        if (config.fullscreen) {
+        if (savedState?.isFullScreen || config.fullscreen) {
             mainWindow?.setFullScreen(true)
         }
 
