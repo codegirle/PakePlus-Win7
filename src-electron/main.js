@@ -131,8 +131,13 @@ async function createWindow() {
     })
 }
 
-// creat the menu
+// creat the menu, only for macOS
 function createMenu() {
+    if (process.platform !== 'darwin') {
+        // Windows / Linux don't show the menu
+        Menu.setApplicationMenu(null)
+        return
+    }
     const template = [
         {
             label: app.name,
@@ -162,19 +167,14 @@ function createMenu() {
 
 // when the application is ready, create the window and the menu
 app.whenReady().then(() => {
+    // create the menu
     createMenu()
 
     // create the window
     createWindow()
-    // when the application is activated, create the window
-    app.on('activate', () => {
-        if (BrowserWindow.getAllWindows().length === 0) {
-            createWindow()
-        }
-    })
 })
 
-// when all windows are closed, quit the application（所有平台关窗后都退出，避免 Dock/任务栏图标残留）
+// when all windows are closed, quit the application
 app.on('window-all-closed', () => {
     app.quit()
 })
