@@ -9,7 +9,7 @@ const updatePackage = async (appName, showName, version, id) => {
     const packageJson = await fs.readJson(
         path.join(__dirname, '../', 'package.json')
     )
-    packageJson.name = showName
+    packageJson.name = appName
     // update productName
     packageJson.build.productName = showName
     // update id
