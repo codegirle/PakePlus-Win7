@@ -42,8 +42,8 @@
             "output": "dist"
         },
         "files": [
-            "src-electron/**",
             "src/**",
+            "src-electron/**",
             "package.json"
         ],
         "win": {
