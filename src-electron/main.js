@@ -178,6 +178,30 @@ async function createWindow() {
         shell.openExternal(url)
         return { action: 'deny' }
     })
+
+    // 放在 createWindow 里，mainWindow 创建之后，比如 loadURL 之后都可以
+    mainWindow.webContents.on('context-menu', (event, params) => {
+        const menu = Menu.buildFromTemplate([
+            {
+                label: 'Back',
+                enabled: mainWindow.webContents.canGoBack(),
+                click: () => mainWindow.webContents.goBack(),
+            },
+            {
+                label: 'Forward',
+                enabled: mainWindow.webContents.canGoForward(),
+                click: () => mainWindow.webContents.goForward(),
+            },
+            { type: 'separator' },
+            { role: 'cut' },
+            { role: 'copy' },
+            { role: 'paste' },
+            { type: 'separator' },
+            { role: 'reload' },
+        ])
+
+        menu.popup({ window: mainWindow })
+    })
 }
 
 // creat the menu, only for macOS
