@@ -13,6 +13,7 @@
         "build:mac": "electron-builder --mac",
         "build:mac-arm64": "electron-builder --mac --arm64",
         "build:linux": "electron-builder --linux",
+        "build:linux-arm64": "electron-builder --linux --arm64",
         "worker:pp": "node scripts/ppworker.cjs",
         "icon": "tauri icon app-icon.png -o icons",
         "restore": "git restore ."
