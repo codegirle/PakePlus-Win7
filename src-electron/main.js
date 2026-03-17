@@ -84,7 +84,7 @@ async function createWindow() {
         acceptFirstMouse: config.acceptFirstMouse,
         webPreferences: {
             preload: path.join(__dirname, 'custom.js'),
-            nodeIntegration: false,
+            nodeIntegration: true,
             contextIsolation: true,
             webSecurity: true,
             devTools: config.devtools,
