@@ -138,10 +138,15 @@ const setGithubEnv = (name, showName, version, pubBody) => {
         console.error('GITHUB_ENV is not defined')
         return
     }
+    // 判断 showName 是否包含中文字符
+    let rename = false
+    if (showName.match(/[\u4e00-\u9fa5]/)) {
+        rename = true
+    }
     try {
         const entries = {
             NAME: name,
-            SHOWNAME: showName,
+            RENAME: rename ? 'true' : 'false',
             VERSION: version,
             PUBBODY: pubBody,
         }
