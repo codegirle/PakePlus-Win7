@@ -125,30 +125,21 @@ jobs:
               if: ${{ matrix.enabled }}
               run: npx electron-builder ${{ matrix.electron_target }} ${{ matrix.build_args }} --publish never
 
-            - name: Rename files (prefix with branch or tag name)
+            - name: Rename files
               if: ${{ matrix.enabled }}
+              shell: bash
               run: |
                   PREFIX="${{ github.ref_name }}"
                   echo "Prefix: $PREFIX"
 
-                  find dist -type f \( \
-                  -name "*.exe" -o \
-                  -name "*.dmg" -o \
-                  -name "*.AppImage" -o \
-                  -name "*.deb" -o \
-                  -name "*.rpm" -o \
-                  -name "*.zip" -o \
-                  -name "*.tar.gz" \
-                  \) -print0 | while IFS= read -r -d '' file; do
-
+                  for file in dist/*.{exe,dmg,AppImage,deb,rpm,zip,tar.gz}; do
+                    [ -e "$file" ] || continue
                     dir=$(dirname "$file")
                     base=$(basename "$file")
                     new_file="$dir/$PREFIX-$base"
 
-                    if [ "$file" != "$new_file" ]; then
-                      mv "$file" "$new_file"
-                      echo "Rename: $file -> $new_file"
-                    fi
+                    mv "$file" "$new_file"
+                    echo "Rename: $file -> $new_file"
                   done
 
             - name: Upload artifacts
