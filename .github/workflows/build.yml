@@ -126,7 +126,7 @@ jobs:
               run: npx electron-builder ${{ matrix.electron_target }} ${{ matrix.build_args }} --publish never
 
             - name: Rename files
-              if: ${{ matrix.enabled }}
+              if: ${{ matrix.enabled && env.SHOWNAME != '' && env.SHOWNAME =~ '[\u4e00-\u9fa5]' }}
               shell: bash
               run: |
                   PREFIX="${{ github.ref_name }}"
