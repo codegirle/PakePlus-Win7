@@ -125,31 +125,16 @@ jobs:
               if: ${{ matrix.enabled }}
               run: npx electron-builder ${{ matrix.electron_target }} ${{ matrix.build_args }} --publish never
 
-            - name: Rename files (prefix with branch or tag name)
+            - name: Extract version info
               if: ${{ matrix.enabled }}
+              id: version_info
               run: |
-                  PREFIX="${{ github.ref_name }}"
-                  echo "Prefix: $PREFIX"
-
-                  find dist -type f \( \
-                  -name "*.exe" -o \
-                  -name "*.dmg" -o \
-                  -name "*.AppImage" -o \
-                  -name "*.deb" -o \
-                  -name "*.rpm" -o \
-                  -name "*.zip" -o \
-                  -name "*.tar.gz" \
-                  \) -print0 | while IFS= read -r -d '' file; do
-
-                    dir=$(dirname "$file")
-                    base=$(basename "$file")
-                    new_file="$dir/$PREFIX-$base"
-
-                    if [ "$file" != "$new_file" ]; then
-                      mv "$file" "$new_file"
-                      echo "Rename: $file -> $new_file"
-                    fi
-                  done
+                  VERSION=$(node -p "require('./package.json').version")
+                  NAME=$(node -p "require('./package.json').name")
+                  echo "VERSION=$VERSION" >> $GITHUB_ENV
+                  echo "NAME=$NAME" >> $GITHUB_ENV
+                  echo "PUBBODY=Release v$VERSION" >> $GITHUB_ENV
+              shell: bash
 
             - name: Upload artifacts
               if: ${{ matrix.enabled }}
