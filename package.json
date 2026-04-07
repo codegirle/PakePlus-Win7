@@ -88,7 +88,7 @@
                 "AppImage",
                 "deb"
             ],
-            "icon": "icons/icon.png"
+            "icon": "icons/icon.icns"
         },
         "nsis": {
             "oneClick": false,
