@@ -93,7 +93,7 @@ async function createWindow() {
             sandbox: true,
             partition,
         },
-        icon: path.join(__dirname, '../icons/icon.png'),
+        icon: path.join(__dirname, '../icons/icon.icns'),
         show: false,
         backgroundColor: config.backgroundColor ?? '#ffffff',
         x: savedState?.x,
